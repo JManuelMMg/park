@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: park_app
+    container_name: park_app
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
+    environment:
+      - DATABASE_URL=postgresql://parking_user:zIa9A8kicLBDh8hC4k6xq4DZXH9oQGfw@dpg-d13s1c8gjchc73fgk4t0-a.oregon-postgres.render.com/parking_db_3of6?sslmode=require
+      - DJANGO_SETTINGS_MODULE=parking_system.settings
+      - PORT=8000
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here}
+      - DEBUG=False
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - CSRF_TRUSTED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  redis_data: 
